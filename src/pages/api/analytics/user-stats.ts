@@ -30,10 +30,16 @@ export const GET: APIRoute = async ({ request }) => {
     // Extract and validate JWT token from Authorization header
     const token = extractToken(request);
 
-    // Create Supabase client with environment variables
+    // Create Supabase client with environment variables and user token
     const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
 
     // Authenticate user and get user ID
     const userId = await authenticateUser(token, supabase);

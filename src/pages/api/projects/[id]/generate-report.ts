@@ -16,20 +16,44 @@ export const POST: APIRoute = async ({ params, request }) => {
     const token = extractToken(request);
     const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
 
     const userId = await authenticateUser(token, supabase);
+    logger.info("Authenticated user", { user_id: userId });
 
     // Fetch project data
-    const { data: project, error: fetchError } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("id", id)
-      .eq("user_id", userId)
-      .single();
+    logger.info("Fetching project data", { project_id: id, user_id: userId });
+    const { data: project, error: fetchError } = await supabase.from("projects").select("*").eq("id", id).single();
 
-    if (fetchError || !project) {
+    if (fetchError) {
+      logger.warn("Project not found", {
+        project_id: id,
+        error: fetchError?.message,
+      });
+      return new Response(JSON.stringify({ error: "Project not found (fetch error)" }), { status: 404 });
+    }
+
+    if (!project) {
+      logger.warn("Project not found", {
+        project_id: id,
+        error: fetchError?.message,
+      });
       return new Response(JSON.stringify({ error: "Project not found" }), { status: 404 });
+    }
+
+    if (project.user_id !== userId) {
+      logger.warn("Access denied for project", {
+        project_id: id,
+        user_id: userId,
+        project_owner_id: project.user_id,
+      });
+      return new Response(JSON.stringify({ error: "Access denied" }), { status: 403 });
     }
 
     const openRouterService = new OpenRouterService({
@@ -62,7 +86,10 @@ ${project.production_config}`;
 
     logger.info("Generating AI report for project", { project_id: id, user_id: userId });
 
-    const result = await openRouterService.completeChat<{ report_html: string; recommendations_html: string }>({
+    const result = await openRouterService.completeChat<{
+      report_html: string;
+      recommendations_html: string;
+    }>({
       systemPrompt,
       userPrompt,
       response_format: {
@@ -84,17 +111,15 @@ ${project.production_config}`;
     });
 
     // Save report to database
-    const { error: updateError } = await supabase
-      .from("projects")
-      .update({
-        report_html: result.report_html,
-        recommendations_html: result.recommendations_html,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id);
+    const { error: insertError } = await supabase.from("reports").insert({
+      project_id: id,
+      diff_html: result.report_html,
+      recommendations: result.recommendations_html,
+    });
 
-    if (updateError) {
-      throw updateError;
+    if (insertError) {
+      logger.error("Error saving report to database", { error: insertError.message, project_id: id });
+      throw insertError;
     }
 
     return new Response(JSON.stringify({ data: result }), {

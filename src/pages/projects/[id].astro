@@ -7,7 +7,7 @@ const { id } = Astro.params;
 ---
 
 <Layout title="Edit Project - EnvWatcher">
-  <div class="container py-8">
+  <div class="py-8">
     <AuthGuard client:only="react">
       <ProjectEditor projectId={id} client:load />
     </AuthGuard>

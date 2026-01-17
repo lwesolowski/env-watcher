@@ -81,7 +81,7 @@ export function ProjectDashboard() {
       develop_config: 'node: 18.1.0\npostgres: 14.1\nredis: 6.2\nstripe_api_version: 2022-11-15',
       staging_config: 'node: 18.1.0\npostgres: 14.1\nredis: 6.2\nstripe_api_version: 2022-11-15',
       production_config: 'node: 16.15.0\npostgres: 12.8\nredis: 6.0\nstripe_api_version: 2020-08-27',
-      status: 'Draft' as const
+      status: 'draft' as const
     };
 
     const { data, error } = await supabaseClient
@@ -113,12 +113,12 @@ export function ProjectDashboard() {
   }
 
   if (!mounted) {
-    return <div className="container py-8 space-y-6" />;
+    return <div className="py-8 space-y-6" />;
   }
 
   if (!user) {
     return (
-      <div className="container py-8 flex flex-col items-center justify-center min-h-[400px] text-center">
+      <div className="py-8 flex flex-col items-center justify-center min-h-[400px] text-center">
         <h1 className="text-3xl font-bold tracking-tight mb-4">Please log in</h1>
         <p className="text-muted-foreground mb-8">You need to be logged in to view your projects.</p>
         <Button onClick={() => window.location.href = '/login'}>
@@ -130,7 +130,7 @@ export function ProjectDashboard() {
 
   if (loading && projects.length === 0) {
     return (
-      <div className="container py-8 space-y-6">
+      <div className="py-8 space-y-6">
         <div className="flex justify-between items-center">
           <Skeleton className="h-10 w-48" />
           <Skeleton className="h-10 w-32" />
@@ -145,7 +145,7 @@ export function ProjectDashboard() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Your Projects</h1>

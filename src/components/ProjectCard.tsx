@@ -27,8 +27,8 @@ export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <h3 className="font-semibold text-lg">{project.name}</h3>
-          <Badge variant={project.status === 'Verified' ? 'default' : 'secondary'}>
-            {project.status}
+          <Badge variant={project.status === 'verified' ? 'default' : 'secondary'}>
+            {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
           </Badge>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

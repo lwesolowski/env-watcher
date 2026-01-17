@@ -21,7 +21,7 @@ export function ProjectEditor({ projectId }: ProjectEditorProps) {
   const [productionConfig, setProductionConfig] = useState("");
   const [reportHtml, setReportHtml] = useState<string | null>(null);
   const [recommendationsHtml, setRecommendationsHtml] = useState<string | null>(null);
-  const [status, setStatus] = useState<string>("Draft");
+  const [status, setStatus] = useState<string>("draft");
   const [loading, setLoading] = useState(!!projectId);
   const [saving, setSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -30,16 +30,28 @@ export function ProjectEditor({ projectId }: ProjectEditorProps) {
     setMounted(true);
     if (projectId) {
       const fetchProject = async () => {
-        const { data, error } = await supabaseClient.from("projects").select("*").eq("id", projectId).single();
+        const { data, error } = await supabaseClient
+          .from("projects")
+          .select("*, reports(*)")
+          .eq("id", projectId)
+          .single();
 
         if (!error && data) {
           setName(data.name);
           setDevelopConfig(data.develop_config);
           setStagingConfig(data.staging_config);
           setProductionConfig(data.production_config);
-          setReportHtml(data.report_html);
-          setRecommendationsHtml(data.recommendations_html);
-          setStatus(data.status || "Draft");
+          setStatus(data.status || "draft");
+
+          // Get the latest report if it exists
+          if (data.reports && Array.isArray(data.reports) && data.reports.length > 0) {
+            const reports = data.reports as any[];
+            const latestReport = reports.sort(
+              (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            )[0];
+            setReportHtml(latestReport.diff_html);
+            setRecommendationsHtml(latestReport.recommendations);
+          }
         }
         setLoading(false);
       };
@@ -126,11 +138,11 @@ export function ProjectEditor({ projectId }: ProjectEditorProps) {
     try {
       const { error } = await supabaseClient
         .from("projects")
-        .update({ status: "Verified", updated_at: new Date().toISOString() })
+        .update({ status: "verified", updated_at: new Date().toISOString() })
         .eq("id", projectId);
 
       if (error) throw error;
-      setStatus("Verified");
+      setStatus("verified");
       alert("Report accepted and project verified!");
     } catch (error) {
       alert("Error accepting report: " + (error as Error).message);
@@ -177,8 +189,8 @@ export function ProjectEditor({ projectId }: ProjectEditorProps) {
           <CardTitle>General Information</CardTitle>
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Status:</span>
-            <span className={`text-sm font-bold ${status === "Verified" ? "text-green-500" : "text-yellow-500"}`}>
-              {status}
+            <span className={`text-sm font-bold ${status === "verified" ? "text-green-500" : "text-yellow-500"}`}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}
             </span>
           </div>
         </CardHeader>
@@ -234,7 +246,7 @@ export function ProjectEditor({ projectId }: ProjectEditorProps) {
         <div id="report-section" className="space-y-8 animate-in fade-in duration-500">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold tracking-tight">Analysis Results</h2>
-            {status !== "Verified" && (
+            {status !== "verified" && (
               <Button onClick={handleAcceptReport} className="bg-green-600 hover:bg-green-700">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Accept Report
