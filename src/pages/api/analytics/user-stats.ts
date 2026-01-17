@@ -31,8 +31,8 @@ export const GET: APIRoute = async ({ request }) => {
     const token = extractToken(request);
 
     // Create Supabase client with environment variables
-    const supabaseUrl = import.meta.env.SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
     const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
     // Authenticate user and get user ID

@@ -1,8 +1,12 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
-  <Welcome />
+  <script is:inline>
+    // Simple redirect for MVP. AuthGuard will handle session in React, 
+    // but this helps avoid showing Welcome on root for logged users or vice-versa.
+    // In a real app, middleware or server-side session check would be better.
+    window.location.href = '/dashboard';
+  </script>
 </Layout>
