@@ -27,9 +27,11 @@ export function EmptyState({ onLoadDemo, onCreateNew }: EmptyStateProps) {
           </ul>
         </div>
         <CardFooter className="flex justify-center gap-4">
-          <Button variant="outline" onClick={onLoadDemo} className="flex items-center gap-2">
-            <Play className="h-4 w-4" />
-            Load Demo
+          <Button variant="outline" asChild className="flex items-center gap-2">
+            <a href="/projects/demo">
+              <Play className="h-4 w-4" />
+              View Demo
+            </a>
           </Button>
           <Button onClick={onCreateNew} className="flex items-center gap-2">
             <PlusCircle className="h-4 w-4" />
