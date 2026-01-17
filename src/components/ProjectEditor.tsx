@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useStore } from "@nanostores/react";
+import { $user } from "@/lib/authStore";
 import { supabaseClient } from "@/db/supabase.client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save, Play, Loader2, ArrowLeft } from "lucide-react";
-import type { Database } from "@/db/database.types";
-
-type Project = Database["public"]["Tables"]["projects"]["Row"];
 
 interface ProjectEditorProps {
   projectId?: string;
-  userId: string;
 }
 
-export function ProjectEditor({ projectId, userId }: ProjectEditorProps) {
+export function ProjectEditor({ projectId }: ProjectEditorProps) {
+  const user = useStore($user);
   const [name, setName] = useState("");
   const [developConfig, setDevelopConfig] = useState("");
   const [stagingConfig, setStagingConfig] = useState("");
@@ -25,11 +24,7 @@ export function ProjectEditor({ projectId, userId }: ProjectEditorProps) {
   useEffect(() => {
     if (projectId) {
       const fetchProject = async () => {
-        const { data, error } = await supabaseClient
-          .from("projects")
-          .select("*")
-          .eq("id", projectId)
-          .single();
+        const { data, error } = await supabaseClient.from("projects").select("*").eq("id", projectId).single();
 
         if (!error && data) {
           setName(data.name);
@@ -55,23 +50,16 @@ export function ProjectEditor({ projectId, userId }: ProjectEditorProps) {
       develop_config: developConfig,
       staging_config: stagingConfig,
       production_config: productionConfig,
-      user_id: userId,
+      user_id: user?.id,
       updated_at: new Date().toISOString(),
     };
 
     let error;
     if (projectId) {
-      const { error: updateError } = await supabaseClient
-        .from("projects")
-        .update(projectData)
-        .eq("id", projectId);
+      const { error: updateError } = await supabaseClient.from("projects").update(projectData).eq("id", projectId);
       error = updateError;
     } else {
-      const { data, error: insertError } = await supabaseClient
-        .from("projects")
-        .insert(projectData)
-        .select()
-        .single();
+      const { data, error: insertError } = await supabaseClient.from("projects").insert(projectData).select().single();
       error = insertError;
       if (!error && data) {
         window.location.href = `/projects/${data.id}`;
@@ -96,12 +84,10 @@ export function ProjectEditor({ projectId, userId }: ProjectEditorProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => window.location.href = "/dashboard"}>
+          <Button variant="ghost" size="icon" onClick={() => (window.location.href = "/dashboard")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {projectId ? "Edit Project" : "New Project"}
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">{projectId ? "Edit Project" : "New Project"}</h1>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleSave} disabled={saving}>
@@ -180,7 +166,11 @@ function ConfigField({ label, value, onChange, placeholder }: ConfigFieldProps) 
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
-        <div className={`mt-2 text-xs text-right ${isOverLimit ? "text-destructive font-bold" : isNearLimit ? "text-yellow-500" : "text-muted-foreground"}`}>
+        <div
+          className={`mt-2 text-xs text-right ${
+            isOverLimit ? "text-destructive font-bold" : isNearLimit ? "text-yellow-500" : "text-muted-foreground"
+          }`}
+        >
           {value.length.toLocaleString()} / {charLimit.toLocaleString()} chars
         </div>
       </CardContent>
