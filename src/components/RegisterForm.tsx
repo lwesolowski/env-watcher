@@ -12,6 +12,7 @@ export function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isRegistered, setIsRegistered] = useState(false)
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,8 +34,28 @@ export function RegisterForm() {
       setError(error.message)
       setLoading(false)
     } else {
-      window.location.href = "/dashboard"
+      setIsRegistered(true)
+      setLoading(false)
     }
+  }
+
+  if (isRegistered) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">Check your email</CardTitle>
+          <CardDescription className="text-center">
+            We've sent a confirmation link to <strong>{email}</strong>. 
+            Please click the link to activate your account.
+          </CardDescription>
+        </CardHeader>
+        <CardFooter className="flex justify-center">
+          <Button variant="outline" onClick={() => window.location.href = "/login"}>
+            Back to Login
+          </Button>
+        </CardFooter>
+      </Card>
+    )
   }
 
   return (

@@ -23,7 +23,11 @@ export function LoginForm() {
     })
 
     if (error) {
-      setError(error.message)
+      if (error.message.toLowerCase().includes("email not confirmed")) {
+        setError("Please confirm your email address before logging in.")
+      } else {
+        setError(error.message)
+      }
       setLoading(false)
     } else {
       window.location.href = "/dashboard"
