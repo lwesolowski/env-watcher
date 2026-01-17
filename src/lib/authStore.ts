@@ -28,6 +28,12 @@ if (typeof window !== "undefined") {
       $session.set(session);
       $user.set(session?.user ?? null);
       $authLoading.set(false);
+
+      if (session) {
+        const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+        document.cookie = `sb-access-token=${session.access_token}; path=/; expires=${expires}; SameSite=Lax; secure`;
+        document.cookie = `sb-refresh-token=${session.refresh_token}; path=/; expires=${expires}; SameSite=Lax; secure`;
+      }
     })
     .catch((err) => {
       clearTimeout(timeoutId);
@@ -39,5 +45,14 @@ if (typeof window !== "undefined") {
     $session.set(session);
     $user.set(session?.user ?? null);
     $authLoading.set(false);
+
+    if (session) {
+      const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+      document.cookie = `sb-access-token=${session.access_token}; path=/; expires=${expires}; SameSite=Lax; secure`;
+      document.cookie = `sb-refresh-token=${session.refresh_token}; path=/; expires=${expires}; SameSite=Lax; secure`;
+    } else {
+      document.cookie = "sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie = "sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
   });
 }

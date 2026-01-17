@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { supabaseClient } from "@/db/supabase.client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,23 @@ export function LoginForm() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Check for success message in URL (e.g. after email verification)
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("verified") === "true") {
+      setSuccessMessage("Email verified successfully. You can now log in.")
+    }
+    
+    // Check if there is a hash fragment that might indicate a successful verification from Supabase
+    // Sometimes Supabase redirects with access_token in the hash after verification
+    if (window.location.hash.includes("access_token")) {
+      setSuccessMessage("Email verified successfully. You can now log in.")
+      // Optional: clean up the hash
+      window.history.replaceState(null, "", window.location.pathname + window.location.search)
+    }
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -73,8 +90,13 @@ export function LoginForm() {
               {error}
             </div>
           )}
+          {successMessage && (
+            <div className="text-sm font-medium text-green-600 dark:text-green-400">
+              {successMessage}
+            </div>
+          )}
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
+        <CardFooter className="flex flex-col space-y-4 pt-6">
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </Button>
