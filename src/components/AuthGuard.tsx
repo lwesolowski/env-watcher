@@ -10,6 +10,11 @@ interface AuthGuardProps {
 export function AuthGuard({ children }: AuthGuardProps) {
   const user = useStore($user);
   const loading = useStore($authLoading);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (loading) {
     return (
@@ -17,6 +22,10 @@ export function AuthGuard({ children }: AuthGuardProps) {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
+  }
+
+  if (!mounted) {
+    return <div className="flex items-center justify-center py-12" />;
   }
 
   if (!user) {

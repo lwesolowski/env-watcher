@@ -14,6 +14,7 @@ type Project = Database["public"]["Tables"]["projects"]["Row"];
 export function ProjectDashboard() {
   const user = useStore($user);
   const authLoading = useStore($authLoading);
+  const [mounted, setMounted] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -40,6 +41,7 @@ export function ProjectDashboard() {
   };
 
   useEffect(() => {
+    setMounted(true);
     if (!authLoading && user) {
       fetchProjects();
     }
@@ -108,6 +110,10 @@ export function ProjectDashboard() {
         </div>
       </div>
     );
+  }
+
+  if (!mounted) {
+    return <div className="container py-8 space-y-6" />;
   }
 
   if (!user) {

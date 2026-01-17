@@ -6,7 +6,7 @@ import { AuthGuard } from "../../components/AuthGuard";
 
 <Layout title="New Project - EnvWatcher">
   <div class="container py-8">
-    <AuthGuard client:load>
+    <AuthGuard client:only="react">
       <ProjectEditor client:load />
     </AuthGuard>
   </div>
