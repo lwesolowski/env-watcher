@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "10x-mvp-tracker": {
+      "command": "node",
+      "args": [
+        "/Users/lwesolowski/workspace/repos/env-watcher/mcp-servers/10x/node_modules/@przeprogramowani/10x-mvp-tracker/dist/index.js"
+      ]
+    }
+  }
+}
