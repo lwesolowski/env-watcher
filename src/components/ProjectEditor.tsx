@@ -56,6 +56,15 @@ export function ProjectEditor({ projectId }: ProjectEditorProps) {
         setLoading(false);
       };
       fetchProject();
+    } else {
+      // Check for template data in URL
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("template") === "true") {
+        setName(params.get("name") || "");
+        setDevelopConfig(params.get("develop_config") || "");
+        setStagingConfig(params.get("staging_config") || "");
+        setProductionConfig(params.get("production_config") || "");
+      }
     }
   }, [projectId]);
 

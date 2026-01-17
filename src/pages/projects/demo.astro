@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import { ProjectEditor } from "../../components/ProjectEditor";
 import { ReportTable } from "../../components/ReportTable";
 import { RecommendationsSection } from "../../components/RecommendationsSection";
+import { UseAsTemplateButton } from "../../components/UseAsTemplateButton";
 import { Badge } from "../../components/ui/badge";
 
 const demoData = {
@@ -67,9 +68,7 @@ const demoRecommendations = [
         <p class="text-muted-foreground mt-1">This is a read-only preview of a project analysis.</p>
       </div>
       <div class="flex gap-2">
-        <a href="/register" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-          Use as Template
-        </a>
+        <UseAsTemplateButton client:load />
       </div>
     </div>
 
@@ -77,9 +76,7 @@ const demoRecommendations = [
       {['Develop', 'Staging', 'Production'].map((env) => (
         <div class="rounded-xl border bg-card text-card-foreground shadow-sm p-6">
           <h3 class="text-sm font-medium mb-3">{env} Environment</h3>
-          <pre class="text-xs font-mono bg-muted p-3 rounded h-32 overflow-hidden">
-            {demoData[`${env.toLowerCase()}_config` as keyof typeof demoData]}
-          </pre>
+          <pre class="text-xs font-mono bg-muted p-3 rounded h-32 overflow-hidden">{demoData[`${env.toLowerCase()}_config` as keyof typeof demoData]}</pre>
         </div>
       ))}
     </div>
