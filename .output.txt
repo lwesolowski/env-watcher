@@ -1,3 +1,5 @@
+10x
+mcp-servers/10x:
 node_modules            package-lock.json       package.json
 mcp-servers/10x/node_modules:
 @borewit                        is-stream
