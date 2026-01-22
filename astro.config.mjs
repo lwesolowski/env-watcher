@@ -20,10 +20,12 @@ export default defineConfig({
       SUPABASE_URL: envField.string({
         context: "client",
         access: "public",
+        optional: true,
       }),
       SUPABASE_ANON_KEY: envField.string({
         context: "client",
         access: "public",
+        optional: true,
       }),
       OPENROUTER_API_KEY: envField.string({
         context: "server",

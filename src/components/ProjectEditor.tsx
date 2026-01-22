@@ -80,7 +80,7 @@ export function ProjectEditor({ projectId }: ProjectEditorProps) {
       develop_config: developConfig,
       staging_config: stagingConfig,
       production_config: productionConfig,
-      user_id: user?.id,
+      user_id: user?.id as string,
       updated_at: new Date().toISOString(),
     };
 

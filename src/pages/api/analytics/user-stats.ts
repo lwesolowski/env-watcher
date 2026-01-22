@@ -32,7 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
     const token = extractToken(request);
 
     // Create Supabase client with environment variables and user token
-    const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const supabase = createClient<Database>(SUPABASE_URL as string, SUPABASE_ANON_KEY as string, {
       global: {
         headers: {
           Authorization: `Bearer ${token}`,

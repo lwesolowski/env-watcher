@@ -17,7 +17,7 @@ export const POST: APIRoute = async ({ params, request }) => {
     }
 
     const token = extractToken(request);
-    const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const supabase = createClient<Database>(SUPABASE_URL as string, SUPABASE_ANON_KEY as string, {
       global: {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -43,7 +43,6 @@ export const POST: APIRoute = async ({ params, request }) => {
     if (!project) {
       logger.warn("Project not found", {
         project_id: id,
-        error: fetchError?.message,
       });
       return new Response(JSON.stringify({ error: "Project not found" }), { status: 404 });
     }
