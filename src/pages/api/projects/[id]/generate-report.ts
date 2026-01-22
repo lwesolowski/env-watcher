@@ -6,6 +6,9 @@ import { extractToken, authenticateUser } from "../../../../middleware/auth";
 import { handleError } from "../../../../utils/errorHandler";
 import { logger } from "../../../../utils/logger";
 
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "astro:env/client";
+import { OPENROUTER_API_KEY } from "astro:env/server";
+
 export const POST: APIRoute = async ({ params, request }) => {
   try {
     const { id } = params;
@@ -14,9 +17,7 @@ export const POST: APIRoute = async ({ params, request }) => {
     }
 
     const token = extractToken(request);
-    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    const supabase = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
       global: {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -57,7 +58,7 @@ export const POST: APIRoute = async ({ params, request }) => {
     }
 
     const openRouterService = new OpenRouterService({
-      apiKey: import.meta.env.OPENROUTER_API_KEY,
+      apiKey: OPENROUTER_API_KEY,
     });
 
     const systemPrompt = `You are EnvWatcher AI, a specialist in DevOps and environment configuration analysis.

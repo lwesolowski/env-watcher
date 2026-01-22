@@ -6,6 +6,7 @@ import { AnalyticsService } from '../../../services/analyticsService';
 import { extractToken, authenticateUser } from '../../../middleware/auth';
 import { handleError } from '../../../utils/errorHandler';
 import { logger } from '../../../utils/logger';
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "astro:env/client";
 
 /**
  * GET /api/analytics/user-stats
@@ -31,9 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
     const token = extractToken(request);
 
     // Create Supabase client with environment variables and user token
-    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    const supabase = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
       global: {
         headers: {
           Authorization: `Bearer ${token}`,
