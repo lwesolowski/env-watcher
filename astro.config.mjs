@@ -17,11 +17,11 @@ export default defineConfig({
   adapter: cloudflare(),
   env: {
     schema: {
-      PUBLIC_SUPABASE_URL: envField.string({
+      SUPABASE_URL: envField.string({
         context: "client",
         access: "public",
       }),
-      PUBLIC_SUPABASE_ANON_KEY: envField.string({
+      SUPABASE_ANON_KEY: envField.string({
         context: "client",
         access: "public",
       }),

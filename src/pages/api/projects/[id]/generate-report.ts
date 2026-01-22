@@ -6,7 +6,7 @@ import { extractToken, authenticateUser } from "../../../../middleware/auth";
 import { handleError } from "../../../../utils/errorHandler";
 import { logger } from "../../../../utils/logger";
 
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "astro:env/client";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "astro:env/client";
 import { OPENROUTER_API_KEY } from "astro:env/server";
 
 export const POST: APIRoute = async ({ params, request }) => {
@@ -17,7 +17,7 @@ export const POST: APIRoute = async ({ params, request }) => {
     }
 
     const token = extractToken(request);
-    const supabase = createClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
       global: {
         headers: {
           Authorization: `Bearer ${token}`,
