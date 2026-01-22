@@ -5,6 +5,11 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+env:
+  PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co' }}
+  PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key' }}
+  OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY || 'your-openrouter-key' }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
