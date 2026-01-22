@@ -1,5 +1,5 @@
 name = "10x-astro-starter"
-compatibility_date = "2024-04-03"
+compatibility_date = "2026-01-21"
 compatibility_flags = [ "nodejs_compat" ]
 main = "dist/_worker.js/index.js"
 
