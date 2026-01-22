@@ -13,7 +13,7 @@ export const signOut = async () => {
 };
 
 // Initialize auth listener
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && supabaseClient) {
   // Set a safety timeout to stop loading if Supabase doesn't respond
   const timeoutId = setTimeout(() => {
     if ($authLoading.get()) {
@@ -55,4 +55,6 @@ if (typeof window !== "undefined") {
       document.cookie = "sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
   });
+} else {
+  $authLoading.set(false);
 }
